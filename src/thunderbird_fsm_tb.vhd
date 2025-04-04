@@ -68,11 +68,9 @@ architecture test_bench of thunderbird_fsm_tb is
 	-- test I/O signals
 	signal w_clk : std_logic := '0';
 	signal w_reset : std_logic := '0';
-	signal w_left : std_logic := '0';
-	signal w_right : std_logic := '0';
+	signal w_left_or_right : std_logic_vector(1 downto 0);
 	
-	signal w_lights_L : std_logic_vector(2 downto 0);
-	signal w_lights_R : std_logic_vector(2 downto 0);
+	signal w_all_lights : std_logic_vector(5 downto 0);
 	
 	-- constants
 	constant k_clk_period : time := 10 ns;
@@ -83,10 +81,14 @@ begin
 	uut: thunderbird_fsm port map (
 	       i_clk => w_clk,
 	       i_reset => w_reset,
-	       i_left => w_left,
-	       i_right => w_right,
-	       o_lights_L => w_lights_L,
-	       o_lights_R => w_lights_R 
+	       i_left => w_left_or_right(1),
+	       i_right => w_left_or_right(0),
+	       o_lights_L(0) => w_all_lights(0),
+	       o_lights_L(1) => w_all_lights(1),
+	       o_lights_L(2) => w_all_lights(2),
+	       o_lights_R(0) => w_all_lights(3),
+	       o_lights_R(1) => w_all_lights(4),
+	       o_lights_R(2) => w_all_lights(5)
 	    );
 	              
 	-----------------------------------------------------
@@ -105,34 +107,30 @@ begin
 	-- Test Plan Process --------------------------------
 	sim_proc: process
 	begin
-	   
-	   w_reset <= '1'; wait for k_clk_period;
-	   w_reset <= '0'; wait for k_clk_period;
-	   assert w_lights_L = "000" report "Reset failed: Left lights should be off" severity error;
-	   assert w_lights_R = "000" report "Reset failed: Right lights should be off" severity error;
-	   
-	   w_left <= '1'; wait for k_clk_period; w_left <= '0'; wait for k_clk_period;
-	       assert w_lights_L = "001" report "Left 1: Should only be LA" severity error;
+	       
+	   w_left_or_right <= "10"; wait for k_clk_period;
+	       assert w_all_lights = "000001" report "First Left Blinker on" severity failure;
 	   wait for k_clk_period;
-	       assert w_lights_L = "011" report "Left 2: LA and LB should be on" severity error;
+	       assert w_all_lights = "000011" report "First and Second Left on" severity failure;
+	   wait for k_clk_period; 
+	       assert w_all_lights = "000111" report "All blinkers on" severity failure;
 	   wait for k_clk_period;
-	       assert w_lights_L = "111" report "Left 3: All left lights should be on" severity error;
+	       assert w_all_lights = "000000" report "Lights back off" severity failure;
+	       
+	   w_left_or_right <= "00"; wait for k_clk_period;
+	       assert w_all_lights = "00000" report "all lights off" severity failure;
+	       
+	   w_left_or_right <= "10"; wait for k_clk_period;
+	       assert w_all_lights = "001000" report "First Right Blinker on" severity failure;
 	   wait for k_clk_period;
-	       assert w_lights_L = "000" report "Left done: all lights should be off" severity error; 
-	   
-	   w_right <= '1'; wait for k_clk_period; w_right <= '0'; wait for k_clk_period;
-	       assert w_lights_R = "001" report "right 1: Should only be RA" severity error;
+	       assert w_all_lights = "011000" report "First and Second Right on" severity failure;
+	   wait for k_clk_period; 
+	       assert w_all_lights = "111000" report "All blinkers on" severity failure;
 	   wait for k_clk_period;
-	       assert w_lights_R = "011" report "Right 2: RA and RB should be on" severity error;
-	   wait for k_clk_period;
-	       assert w_lights_R = "111" report "Right 3: All left lights should be on" severity error;
-	   wait for k_clk_period;
-	       assert w_lights_R = "000" report "Right done: all lights should be off" severity error;
-	   
-	   w_left <= '1'; w_right <= '1'; wait for k_clk_period; w_left <= '0'; w_right <= '0'; wait for k_clk_period;
-	       assert w_lights_R = "111" and w_lights_L = "111" report "Hazard Lights on: all lights on" severity error;
-	   wait for k_clk_period;
-	       assert w_lights_R = "000" and w_lights_L = "000" report "Hazard Lights off: all lights off" severity error;
+	       assert w_all_lights = "000000" report "Lights back off" severity failure;
+	       
+	   w_left_or_right <= "00"; wait for k_clk_period;
+	       assert w_all_lights = "11111" report "all lights on" severity failure;
 	   
 	  wait;
 	end process;
