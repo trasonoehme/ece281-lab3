@@ -103,16 +103,16 @@ begin
 
 	-- CONCURRENT STATEMENTS --------------------------------------------------------	
 	f_q_next(0) <= (not i_left and not i_right and f_q(7)) or 
-	(not i_left and i_right and f_q(4)) or 
-	(i_left and not i_right and f_q(0)) or 
+	(not i_left and i_right and f_q(5)) or 
+	(i_left and not i_right and f_q(2)) or 
 	(i_left and i_right and f_q(6));
-	f_q_next(1) <= not i_left and i_right and f_q(5);
-	f_q_next(2) <= i_left and not i_right and f_q(2);
-	f_q_next(3) <= i_left and i_right and f_q(6);
-	f_q_next(4) <= not i_left and i_right and f_q(4);
-	f_q_next(5) <= not i_left and i_right and f_q(3);
-	f_q_next(6) <= i_left and not i_right and f_q(2);
-	f_q_next(7) <= i_left and not i_right and f_q(1);
+	f_q_next(1) <= not i_left and not i_right and f_q(7);
+	f_q_next(2) <= not i_left and not i_right and f_q(4);
+	f_q_next(3) <= not i_left and not i_right and f_q(3);
+	f_q_next(4) <= not i_left and not i_right and f_q(7);
+	f_q_next(5) <= not i_left and not i_right and f_q(1);
+	f_q_next(6) <= not i_left and not i_right and f_q(0);
+	f_q_next(7) <= not i_left and not i_right and f_q(7);
     ---------------------------------------------------------------------------------
 	o_lights_R(0) <= f_q(5);
     o_lights_R(1) <= f_q(5) or f_q(4);
