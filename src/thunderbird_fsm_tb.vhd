@@ -107,6 +107,18 @@ begin
 	-- Test Plan Process --------------------------------
 	sim_proc: process
 	begin
+	
+	   w_left_or_right <= "00"; wait for k_clk_period;
+	       assert w_all_lights = "000000" report "all lights off" severity failure;
+	       
+	   w_left_or_right <= "01"; wait for k_clk_period;
+	       assert w_all_lights = "000100" report "First Right Blinker on" severity failure;
+	   wait for k_clk_period;
+	       assert w_all_lights = "000110" report "First and Second Right on" severity failure;
+	   wait for k_clk_period; 
+	       assert w_all_lights = "000111" report "All left blinkers on" severity failure;
+	   wait for k_clk_period;
+	       assert w_all_lights = "000000" report "Lights back off" severity failure;
 	       
 	   w_left_or_right <= "10"; wait for k_clk_period;
 	       assert w_all_lights = "001000" report "First Left Blinker on" severity failure;
@@ -117,20 +129,11 @@ begin
 	   wait for k_clk_period;
 	       assert w_all_lights = "000000" report "Lights back off" severity failure;
 	       
-	   w_left_or_right <= "00"; wait for k_clk_period;
-	       assert w_all_lights = "000000" report "all lights off" severity failure;
-	       
-	   w_left_or_right <= "01"; wait for k_clk_period;
-	       assert w_all_lights = "000001" report "First Right Blinker on" severity failure;
-	   wait for k_clk_period;
-	       assert w_all_lights = "000011" report "First and Second Right on" severity failure;
-	   wait for k_clk_period; 
-	       assert w_all_lights = "000111" report "All left blinkers on" severity failure;
-	   wait for k_clk_period;
-	       assert w_all_lights = "000000" report "Lights back off" severity failure;
 	       
 	   w_left_or_right <= "11"; wait for k_clk_period;
 	       assert w_all_lights = "111111" report "all lights on" severity failure;
+	   wait for k_clk_period;
+	       assert w_all_lights = "000000" report "lights back off" severity failure;
 	   
 	  wait;
 	end process;

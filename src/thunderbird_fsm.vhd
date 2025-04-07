@@ -121,13 +121,12 @@ begin
 	-- PROCESSES --------------------------------------------------------------------
 register_proc : process (i_clk, i_reset)
 begin
-    if (rising_edge(i_clk)) then
-        if (i_reset = '1') then
-            f_q <= "10000000";  -- reset state is off
-        else 
-            f_q <= f_q_next;    -- next state becomes current state
-        end if;
-       end if;
+    if (i_reset = '1') then
+        f_q <= "10000000";  -- reset state is off
+    elsif(rising_edge(i_clk)) then 
+        f_q <= f_q_next; 
+           -- next state becomes current state
+    end if;
 end process register_proc; 
 	-----------------------------------------------------					   
 				  
