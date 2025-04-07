@@ -102,17 +102,15 @@ architecture thunderbird_fsm_arch of thunderbird_fsm is
 begin
 
 	-- CONCURRENT STATEMENTS --------------------------------------------------------	
-	f_q_next(7) <= (not i_left and not i_right and f_q(7)) or 
-	(not i_left and i_right and f_q(5)) or 
-	(i_left and not i_right and f_q(2)) or 
-	(i_left and i_right and f_q(6));
-	f_q_next(6) <= not i_left and not i_right and f_q(7);
-	f_q_next(5) <= not i_left and not i_right and f_q(4);
-	f_q_next(4) <= not i_left and not i_right and f_q(3);
-	f_q_next(3) <= not i_left and not i_right and f_q(7);
-	f_q_next(2) <= not i_left and not i_right and f_q(1);
-	f_q_next(1) <= not i_left and not i_right and f_q(0);
-	f_q_next(0) <= not i_left and not i_right and f_q(7);
+    f_q_next(0) <= f_q(1);
+    f_q_next(1) <= f_q(2);
+    f_q_next(2) <= f_q(7) and i_left;
+    f_q_next(3) <= f_q(4);
+    f_q_next(4) <= f_q(5);
+    f_q_next(5) <= f_q(7) and i_right;
+    f_q_next(6) <= f_q(7) and i_right and i_left;
+    f_q_next(7) <= (f_q(7) and not i_right and not i_left) or
+    f_q(6) or f_q(3) or f_q(0);
     ---------------------------------------------------------------------------------
 	o_lights_R(0) <= f_q(5);
     o_lights_R(1) <= f_q(5) or f_q(4);
@@ -125,9 +123,9 @@ register_proc : process (i_clk, i_reset)
 begin
     if (rising_edge(i_clk)) then
         if (i_reset = '1') then
-            f_Q <= "10000000";  -- reset state is off
+            f_q <= "10000000";  -- reset state is off
         else 
-            f_Q <= f_Q_next;    -- next state becomes current state
+            f_q <= f_q_next;    -- next state becomes current state
         end if;
        end if;
 end process register_proc; 
